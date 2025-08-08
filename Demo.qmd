@@ -1,0 +1,68 @@
+---
+title: "Demo F3T"
+format: html
+editor: visual
+---
+
+## F3T
+
+F3T is an R package to perform FFT very fast. The computing backend is written in Rust and uses multi-core computing.
+
+## Demo
+
+Simulating a mix of frequency signals: 7, 41 and 221Hz with a lot of noise added.
+
+```{r}
+library(tidyverse)
+library(f3t)
+rate <- 512  # large sample rate for meaningful load
+secs <- 3600 * 24 # one day
+# time <- seq(0, secs, length.out = rate * secs) # time stamps
+freqs = c(7, 41, 221) # mixture of three frequencies
+ampls <- c(2, 3, 5)
+phases <- c(0,0,0)
+error = 19
+
+signal <- f3t::generate_sine_mixture(secs, rate, freqs, ampls, phases, error) 
+
+tibble(signal = signal) |> 
+  head(4096) |> 
+  mutate(time = row_number() * 1/rate) |> 
+  ggplot(aes(x = time, y = signal)) +
+  geom_line()
+```
+
+Run sliding window FFT and collect in a data frame with frequencies in columns.
+
+```{r}
+
+window_size <- 4096
+hop_size <- 1024
+rm(spectra)
+spectra <- signal |> f3t::fft_sliding_parallel(window_size, hop_size, threads = 16)
+
+  
+spectrogram <- bind_rows(spectra) |>  t() |>  as_tibble()
+rm(spectra)
+names(spectrogram) <- as.character(1:window_size)
+
+
+```
+
+Plotting a spectrogram on a small part of the data.
+
+```{r}
+spectro_long <- 
+  spectrogram |> 
+  head(rate * 2) |> 
+  mutate(time = row_number())|> 
+  pivot_longer(-time, names_to = "freq", values_to = "mag") |> 
+  mutate(freq = (as.integer(freq) - 1) * (rate/window_size)) |>
+  filter(freq < window_size/2)
+  
+
+spectro_long |> 
+  ggplot(aes(x = time, y = freq, col = mag)) +
+  geom_point(size = 0.01) +
+  scale_color_gradient(low="White", high="Blue")
+```
