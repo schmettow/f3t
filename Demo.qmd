@@ -16,12 +16,12 @@ Simulating a mix of frequency signals: 7, 41 and 221Hz with a lot of noise added
 library(tidyverse)
 library(f3t)
 rate <- 512  # large sample rate for meaningful load
-secs <- 3600 * 24 # one day
+secs <- 3600 * 1 # one day
 # time <- seq(0, secs, length.out = rate * secs) # time stamps
-freqs = c(7, 41, 221) # mixture of three frequencies
+freqs = c(11, 41, 181) # mixture of three frequencies
 ampls <- c(2, 3, 5)
 phases <- c(0,0,0)
-error = 19
+error = 25 # Noise
 
 signal <- f3t::generate_sine_mixture(secs, rate, freqs, ampls, phases, error) 
 
@@ -37,7 +37,7 @@ Run sliding window FFT and collect in a data frame with frequencies in columns.
 ```{r}
 
 window_size <- 4096
-hop_size <- 1024
+hop_size <- 128
 rm(spectra)
 spectra <- signal |> f3t::fft_sliding_parallel(window_size, hop_size, threads = 16)
 
@@ -54,7 +54,7 @@ Plotting a spectrogram on a small part of the data.
 ```{r}
 spectro_long <- 
   spectrogram |> 
-  head(rate * 2) |> 
+  head(rate * secs/hop_size) |> 
   mutate(time = row_number())|> 
   pivot_longer(-time, names_to = "freq", values_to = "mag") |> 
   mutate(freq = (as.integer(freq) - 1) * (rate/window_size)) |>

@@ -37,27 +37,6 @@ NULL
   stop(class, " cannot be modified", call. = FALSE)
 }
 
-#' Compute FFT magnitudes of a real-valued input slice.
-#' Returns a Vec<f64> of magnitudes (length = input.len()).
-#' #@export
-`fft_magnitude` <- function(`input`) {
-  .Call(savvy_fft_magnitude__impl, `input`)
-}
-
-#' Compute FFT magnitudes of a real-valued input slice.
-#' Returns a Vec<f64> of magnitudes (length = input.len()).
-#' #@export
-`fft_magnitude_sliding` <- function(`input`) {
-  .Call(savvy_fft_magnitude_sliding__impl, `input`)
-}
-
-#' Compute FFT magnitudes of a real-valued input slice.
-#' Returns a Vec<f64> of magnitudes (length = input.len()).
-#' # @export
-`fft_parallel` <- function(`input`) {
-  .Call(savvy_fft_parallel__impl, `input`)
-}
-
 #' Parallel FFT over all windows
 #' @export
 `fft_sliding_parallel` <- function(`signal`, `window_size`, `hop_size`, `threads`) {

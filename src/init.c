@@ -34,21 +34,6 @@ SEXP handle_result(SEXP res_) {
     return (SEXP)res;
 }
 
-SEXP savvy_fft_magnitude__impl(SEXP c_arg__input) {
-    SEXP res = savvy_fft_magnitude__ffi(c_arg__input);
-    return handle_result(res);
-}
-
-SEXP savvy_fft_magnitude_sliding__impl(SEXP c_arg__input) {
-    SEXP res = savvy_fft_magnitude_sliding__ffi(c_arg__input);
-    return handle_result(res);
-}
-
-SEXP savvy_fft_parallel__impl(SEXP c_arg__input) {
-    SEXP res = savvy_fft_parallel__ffi(c_arg__input);
-    return handle_result(res);
-}
-
 SEXP savvy_fft_sliding_parallel__impl(SEXP c_arg__signal, SEXP c_arg__window_size, SEXP c_arg__hop_size, SEXP c_arg__threads) {
     SEXP res = savvy_fft_sliding_parallel__ffi(c_arg__signal, c_arg__window_size, c_arg__hop_size, c_arg__threads);
     return handle_result(res);
@@ -61,9 +46,6 @@ SEXP savvy_generate_sine_mixture__impl(SEXP c_arg__duration, SEXP c_arg__samplin
 
 
 static const R_CallMethodDef CallEntries[] = {
-    {"savvy_fft_magnitude__impl", (DL_FUNC) &savvy_fft_magnitude__impl, 1},
-    {"savvy_fft_magnitude_sliding__impl", (DL_FUNC) &savvy_fft_magnitude_sliding__impl, 1},
-    {"savvy_fft_parallel__impl", (DL_FUNC) &savvy_fft_parallel__impl, 1},
     {"savvy_fft_sliding_parallel__impl", (DL_FUNC) &savvy_fft_sliding_parallel__impl, 4},
     {"savvy_generate_sine_mixture__impl", (DL_FUNC) &savvy_generate_sine_mixture__impl, 6},
     {NULL, NULL, 0}
